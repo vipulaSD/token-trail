@@ -1,0 +1,28 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector # @TODO: pin image
+    volumes:
+      - ./otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP HTTP receiver
+
+  prometheus:
+    image: prom/prometheus # @TODO: pin image
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus.yaml:ro
+      - ./data/prometheus:/prometheus
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana # @TODO: pin image
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    ports:
+      - 3000:3000
+    depends_on: [prometheus]
+
+volumes:
+  prometheus-data:
+  grafana-data:
